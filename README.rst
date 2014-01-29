@@ -2,6 +2,7 @@ Semi-fancy bash prompt
 **********************
 
 Byron Peebles, based on https://gist.github.com/insin/1425703
+
 Changes from that are:
 
  * single line prompt
@@ -20,8 +21,9 @@ Set the bash prompt according to:
 Usage
 =====
 
-1. Save this file as ``~/.bash_prompt``
+1. Save the ``bash_prompt.sh`` file as ``~/.bash_prompt`` (or symlink to it)
 2. Add the following line to the end of your ``~/.bashrc`` or ``~/.bash_profile``::
+
    . ~/.bash_prompt
 
 Lineage
