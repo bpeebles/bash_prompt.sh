@@ -100,6 +100,17 @@ set_virtualenv () {
     fi
 }
 
+# Conditionally set the window title to user@host:dir if we're in an xterm
+set_window_title () {
+    case "$TERM" in
+        xterm*|rxvt*|gnome*)
+            WINDOW_TITLE="\[\e]0;\u@\h: \w\a\]"
+            ;;
+        *)
+            WINDOW_TITLE=""
+    esac
+}
+
 # Set the full bash prompt.
 set_bash_prompt () {
     # Set the PROMPT_SYMBOL variable. We do this first so we don't lose the
@@ -116,8 +127,10 @@ set_bash_prompt () {
         BRANCH=''
     fi
 
+    set_window_title
+
     # Set the bash prompt variable.
-    PS1="${PYTHON_VIRTUALENV}\u@\h:${COLOR_NONE}\w${BRANCH}${PROMPT_SYMBOL} "
+    PS1="$WINDOW_TITLE${PYTHON_VIRTUALENV}\u@\h:${COLOR_NONE}\w${BRANCH}${PROMPT_SYMBOL} "
 }
 
 # Tell bash to execute this function just before displaying its prompt.
