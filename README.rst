@@ -22,7 +22,8 @@ Usage
 =====
 
 1. Save the ``bash_prompt.sh`` file as ``~/.bash_prompt`` (or symlink to it)
-2. Add the following line to the end of your ``~/.bashrc`` or ``~/.bash_profile``::
+2. Add the following line to the end of your ``~/.bash_aliases``, ``~/.bashrc``
+   or ``~/.bash_profile`` depending on your preference::
 
    . ~/.bash_prompt
 
