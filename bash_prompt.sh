@@ -74,8 +74,11 @@ set_git_branch () {
 
     # Get the name of the branch.
     branch_pattern="(# |)On branch ([^${IFS}]*)"
+    detacted_pattern="(# |)([^ ]*) detached at (\S*)"
     if [[ ${git_status} =~ ${branch_pattern} ]]; then
         branch=${BASH_REMATCH[2]}
+    elif [[ ${git_status} =~ ${detacted_pattern} ]]; then
+        branch="${YELLOW}↮${state}${BASH_REMATCH[3]}"
     fi
 
     # Set the final branch string.
