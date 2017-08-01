@@ -82,6 +82,11 @@ set_git_branch () {
         branch="${YELLOW}↮${state}${BASH_REMATCH[3]}"
     fi
 
+    # See https://github.com/git/git/commit/8976500cbbb13270398d3b3e07a17b8cc7bff43f
+    # as to why do this to avoid executing code in branch names.
+    __git_ps1_branch_name=$branch
+    branch="\${__git_ps1_branch_name}"
+
     # Set the final branch string.
     BRANCH="${state}(${branch})${remote}${COLOR_NONE}"
 }
