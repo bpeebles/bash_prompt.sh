@@ -76,10 +76,15 @@ set_git_branch () {
     # Get the name of the branch.
     branch_pattern="(# |)On branch ([^${IFS}]*)"
     detacted_pattern="(# |)([^ ]*) detached at (\S*)"
+    rebase_pattern="You are currently rebasing branch '([^']*)' on '([^']*)'."
     if [[ ${git_status} =~ ${branch_pattern} ]]; then
         branch=${BASH_REMATCH[2]}
     elif [[ ${git_status} =~ ${detacted_pattern} ]]; then
         branch="${YELLOW}↮${state}${BASH_REMATCH[3]}"
+    elif [[ ${git_status} =~ ${rebase_pattern} ]]; then
+        branch="♽${BASH_REMATCH[1]}→${BASH_REMATCH[2]}"
+    else
+        branch=""
     fi
 
     # See https://github.com/git/git/commit/8976500cbbb13270398d3b3e07a17b8cc7bff43f
