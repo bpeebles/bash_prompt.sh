@@ -36,6 +36,8 @@ WHITE="\[\033[1;37m\]"
 LIGHT_GRAY="\[\033[0;37m\]"
 COLOR_NONE="\[\e[0m\]"
 
+join_by () { local d=$1; shift; echo -n "$1"; shift; printf "%s" "${@/#/$d}"; }
+
 # Detect whether the current directory is a git repository.
 is_git_repository () {
     [ -d .git ] || git rev-parse --git-dir > /dev/null 2>&1
@@ -149,4 +151,9 @@ set_bash_prompt () {
 }
 
 # Tell bash to execute this function just before displaying its prompt.
-PROMPT_COMMAND=set_bash_prompt
+our_prompt_command=$(join_by ';' "${GIT_BASH_PROMPT_BEFORE_COMMAND:-:}" set_bash_prompt "${GIT_BASH_PROMPT_AFTER_COMMAND:-:}")
+if [[ -v PROMPT_COMMAND ]]; then
+    PROMPT_COMMAND="$PROMPT_COMMAND;$our_prompt_command"
+else
+    PROMPT_COMMAND="$our_prompt_command"
+fi
