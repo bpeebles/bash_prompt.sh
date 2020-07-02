@@ -25,6 +25,32 @@
 #
 # https://gist.github.com/31967
 
+# Examples to move into tests:
+# git 2.15.0
+# $ git status
+# On branch master
+# Your branch is up to date with 'origin/master'.
+#
+# nothing to commit, working tree clean
+#
+# $ git status
+# On branch master
+# Your branch is ahead of 'origin/master' by 1 commit.
+#   (use "git push" to publish your local commits)
+#
+# nothing to commit, working tree clean
+#
+# $ git status
+# On branch master
+# Your branch is behind 'origin/master' by 4 commits, and can be fast-forwarded.
+#   (use "git pull" to update your local branch)
+#
+# nothing to commit, working tree clean
+#
+
+
+
+
 # The various escape codes that we can use to color our prompt.
 RED="\[\033[0;31m\]"
 YELLOW="\[\033[1;33m\]"
@@ -35,6 +61,7 @@ LIGHT_GREEN="\[\033[1;32m\]"
 WHITE="\[\033[1;37m\]"
 LIGHT_GRAY="\[\033[0;37m\]"
 COLOR_NONE="\[\e[0m\]"
+DIM="\[\e[2m\]"
 
 join_by () { local d=$1; shift; echo -n "$1"; shift; printf "%s" "${@/#/$d}"; }
 
@@ -58,12 +85,13 @@ set_git_branch () {
         state="${LIGHT_RED}"
     fi
 
+    local remote
     # Set arrow icon based on status against remote.
     remote_pattern="(# |)Your branch is (\w*) (of|by|)"
     if [[ ${git_status} =~ ${remote_pattern} ]]; then
         if [[ ${BASH_REMATCH[2]} == "ahead" ]]; then
             remote="↑"
-        else
+        elif [[ ${BASH_REMATCH[2]} == "behind" ]]; then
             remote="↓"
         fi
     else
@@ -101,7 +129,7 @@ set_git_branch () {
 # Return the prompt symbol to use, colorized based on the return value of the
 # previous command.
 set_prompt_symbol () {
-    if test $1 -eq 0 ; then
+    if [ $? -eq 0 ] ; then
         PROMPT_SYMBOL="\$"
     else
         PROMPT_SYMBOL="${LIGHT_RED}\$${COLOR_NONE}"
@@ -130,10 +158,6 @@ set_window_title () {
 
 # Set the full bash prompt.
 set_bash_prompt () {
-    # Set the PROMPT_SYMBOL variable. We do this first so we don't lose the
-    # return value of the last command.
-    set_prompt_symbol $?
-
     # Set the PYTHON_VIRTUALENV variable.
     set_virtualenv
 
@@ -147,13 +171,13 @@ set_bash_prompt () {
     set_window_title
 
     # Set the bash prompt variable.
-    PS1="$WINDOW_TITLE${PYTHON_VIRTUALENV}\u@\h:${COLOR_NONE}\w${BRANCH}${PROMPT_SYMBOL} "
+    PS1="$WINDOW_TITLE${DIM}\t${COLOR_NONE} ${PYTHON_VIRTUALENV}\u@\h:${COLOR_NONE}\w${BRANCH}${PROMPT_SYMBOL} "
 }
 
 # Tell bash to execute this function just before displaying its prompt.
 our_prompt_command=$(join_by ';' "${GIT_BASH_PROMPT_BEFORE_COMMAND:-:}" set_bash_prompt "${GIT_BASH_PROMPT_AFTER_COMMAND:-:}")
 if [[ -v PROMPT_COMMAND ]]; then
-    PROMPT_COMMAND="$PROMPT_COMMAND;$our_prompt_command"
+    PROMPT_COMMAND="set_prompt_symbol;$PROMPT_COMMAND;$our_prompt_command"
 else
-    PROMPT_COMMAND="$our_prompt_command"
+    PROMPT_COMMAND="set_prompt_symbol;$our_prompt_command"
 fi
