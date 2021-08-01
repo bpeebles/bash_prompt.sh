@@ -148,7 +148,7 @@ set_virtualenv () {
 # Conditionally set the window title to user@host:dir if we're in an xterm
 set_window_title () {
     case "$TERM" in
-        xterm*|rxvt*|gnome*)
+        xterm*|rxvt*|gnome*|alacritty)
             WINDOW_TITLE="\[\e]0;\u@\h: \w\a\]"
             ;;
         *)
